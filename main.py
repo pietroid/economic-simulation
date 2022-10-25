@@ -1,23 +1,21 @@
 from typing import List
-class Commodity:
-    def __init__(self, name:str, description: str, quantity: float = 1.0):
-        self.name = name
-        self.description = description
-        self.quantity = quantity
+from entities import Agent, Exchange
 
-class Agent:
-    def __init__(self, money:float, commodities: List[Commodity]):
-        self.money = money
-        self.commodities = commodities
+agents: List[Agent] = []
+exchanges: List[Exchange] = []
 
-class Transformation:
-    def __init__(self, initialAgent: Agent, finalAgent: Agent):
-        self.initialAgent = initialAgent
-        self.finalAgent = finalAgent
+def iteration():
+    #Transformations happen here
+    for i in range(0,len(agents)):
+        initialAgent = agents[i]
+        finalAgent = initialAgent.transform()
+        agents[i] = finalAgent
 
-class Exchange:
-    def __init__(self, primaryAgent: Agent, secondaryAgent: Agent, moneyFlow:float, commoditiesFlow: List[Commodity]):
-        self.primaryAgent = primaryAgent
-        self.secondaryAgent = secondaryAgent
-        self.moneyFlow = moneyFlow
-        self.commoditiesFlow = commoditiesFlow
+    #Exchanges happen here
+    for exchange in exchanges:
+        #TODO: test this condition
+        if exchange.primaryAgent.commodities.intersection(exchange.commoditiesFlow) == exchange.commoditiesFlow and exchange.secondaryAgent.money >= exchange.moneyFlow :
+            exchange.primaryAgent.commodities -= exchange.commoditiesFlow
+            exchange.secondaryAgent.commodities += exchange.commoditiesFlow
+            exchange.primaryAgent.money += exchange.moneyFlow
+            exchange.secondaryAgent.money -= exchange.moneyFlow
