@@ -1,4 +1,3 @@
-from commodities import Food
 from entities import Agent
 from multiset import *
 
@@ -7,7 +6,7 @@ class Land(Agent):
         Agent.__init__(self, 0, Multiset({}))
     
     def transform(self):
-        self.commodities += Multiset({Food()})
+        self.commodities += Multiset({'food'})
 
 class Farmer(Agent):
     def __init__(self):

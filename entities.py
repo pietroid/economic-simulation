@@ -1,9 +1,6 @@
 from typing import List
 from multiset import *
 
-class Commodity:
-    pass
-
 class Agent:
     def __init__(self, money:float, commodities: Multiset):
         self.money = money
