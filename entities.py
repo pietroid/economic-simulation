@@ -2,9 +2,7 @@ from typing import List
 from multiset import *
 
 class Commodity:
-    def __init__(self, name:str, description: str):
-        self.name = name
-        self.description = description
+    pass
 
 class Agent:
     def __init__(self, money:float, commodities: Multiset):
@@ -12,7 +10,7 @@ class Agent:
         self.commodities = commodities
 
     def transform(self):
-        return self
+        pass
 
 
 class Exchange:
