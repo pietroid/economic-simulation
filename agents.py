@@ -1,16 +1,16 @@
 from entities import Agent
-from multiset import *
+from multiset import Multiset as m
 from commodities import food, fertiliser, farmerWork, factoryWork, minerals, minerWork
 
 class Land(Agent):
     def transform(self):
         #natural daily production without fertiliser
-        self.commodities += Multiset({food})
+        self.commodities += m({food})
 
         #daily production with fertiliser
         self.convert(
-            Multiset({fertiliser: 4, farmerWork: 1}), 
-            Multiset({food: 10})
+            m({fertiliser: 4, farmerWork: 1}), 
+            m({food: 10})
         )
 
 class Farmer(Agent):
@@ -33,8 +33,8 @@ class Worker(Agent):
 class Factory(Agent):
     def transform(self):
         self.convert(
-            Multiset({factoryWork: 1, minerals: 5}), 
-            Multiset({fertiliser: 5}),
+            m({factoryWork: 1, minerals: 5}), 
+            m({fertiliser: 5}),
             greedy = True
         )
 
@@ -49,6 +49,6 @@ class Mining(Agent):
     def transform(self):
         self.convert(
             {minerWork}, 
-            Multiset({fertiliser: 5}),
+            m({fertiliser: 5}),
             greedy = True
         )
