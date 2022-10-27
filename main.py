@@ -1,18 +1,23 @@
 from time import sleep
-from typing import List
-from agents import Bank, Farmer, Land
-from entities import Agent, Exchange
 from multiset import *
+from data import exchanges
+from agents import *
+from data import agents
 
 time = 1
-agents: List[Agent] = [Land(), Farmer(), Bank()]
-exchanges: List[Exchange] = []
 
 while(True):
     #Logging
-    print(f'iteration #{time}')
+    print(f'day #{time}')
+    totalMoney = 0
     for agent in agents:
-        print(f'name: {agent.__class__.__name__}, commodities: {agent.commodities}, money: {agent.money}')
+        print(
+            f'{agent.__class__.__name__}'.ljust(15, ' ') +
+            f'commodities: {list(agent.commodities.items())}'.ljust(100, ' ') +
+            f'money: {agent.money}'
+        )
+        totalMoney += agent.money
+    print(f'totalMoney: {totalMoney}')
     print()
 
     #Transformations happen here
@@ -29,4 +34,4 @@ while(True):
 
     #Next iteration
     time += 1
-    sleep(1)
+    sleep(0.01)
