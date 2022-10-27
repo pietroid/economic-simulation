@@ -9,27 +9,9 @@ class Land(Agent):
 
         #daily production with fertiliser
         self.convert(
-            m({fertiliser: 4, farmerWork: 1}), 
+            m({fertiliser: 1, farmerWork: 1}), 
             m({food: 10})
         )
-
-class Farmer(Agent):
-    def transform(self):
-        self.convert(
-            {food}, 
-            {farmerWork}
-        )
-
-class Market(Agent):
-    pass
-
-class Worker(Agent):
-    def transform(self):
-        self.convert(
-            {food}, 
-            {factoryWork}
-        )
-
 class Factory(Agent):
     def transform(self):
         self.convert(
@@ -37,18 +19,41 @@ class Factory(Agent):
             m({fertiliser: 5}),
             greedy = True
         )
-
-class Miner(Agent):
-    def transform(self):
-        self.convert(
-            {food},
-            {minerWork}
-        )
-
 class Mining(Agent):
     def transform(self):
         self.convert(
             {minerWork}, 
-            m({fertiliser: 5}),
+            m({minerals: 5}),
             greedy = True
         )
+
+class Market(Agent):
+    pass
+class BaseWorker(Agent):
+    def __init__(self, workForce, money:float = 0, commodities: m = m({})):
+        super().__init__(money,commodities)
+        self.workForce = workForce
+    
+    def transform(self):
+        if(self.contains({self.workForce})):
+            to = m({})
+        else:
+            to = m({self.workForce})
+        self.convert(
+            {food}, 
+            to
+        )
+class Farmer(BaseWorker):
+    def __init__(self, money:float = 0, commodities: m = m({})):
+        super().__init__(farmerWork, money,commodities)
+
+class Worker(BaseWorker):
+    def __init__(self, money:float = 0, commodities: m = m({})):
+        super().__init__(factoryWork, money, commodities)
+
+class Miner(BaseWorker):
+    def __init__(self, money:float = 0, commodities: m = m({})):
+        super().__init__(minerWork, money, commodities)
+
+
+

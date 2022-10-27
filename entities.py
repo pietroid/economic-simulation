@@ -16,6 +16,9 @@ class Agent:
             self.commodities += to
             if(not greedy): 
                 break
+    
+    def contains(self, commodities: Multiset):
+        return commodities.issubset(self.commodities)
 
 class Exchange:
     def __init__(self, primaryAgent: Agent, secondaryAgent: Agent, moneyFlow:float, commoditiesFlow: Multiset):

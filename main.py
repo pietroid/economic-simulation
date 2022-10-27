@@ -34,4 +34,4 @@ while(True):
 
     #Next iteration
     time += 1
-    sleep(0.01)
+    sleep(0.1)

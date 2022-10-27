@@ -76,8 +76,8 @@ exchanges: List[Exchange] = [
     Exchange(mining, miner2, 0, m({minerals: 10})),
 
     #miner with factory
-    Exchange(miner1, factory, 20, m({minerals: 10})),
-    Exchange(miner2, factory, 20, m({minerals: 10})),
+    Exchange(miner1, factory, 10, m({minerals: 10})),
+    Exchange(miner2, factory, 10, m({minerals: 10})),
 
     #miner with market
     Exchange(market, miner1, 3, m({food: 1})),
