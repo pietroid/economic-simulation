@@ -1,13 +1,17 @@
 from time import sleep
 from multiset import *
 from examples.basic_economy.agents import *
-from examples.basic_economy.setup import agents
+from examples.basic_economy.setup import basicEconomyAgents
 from entities import BuyIntent, Exchange, SellIntent
 
 ##configs
 sleepTime = 0.01
 interrupt = True
 debug = True
+
+#choose what case example to simulate
+agents = basicEconomyAgents
+
 
 time = 1
 exchanges = []

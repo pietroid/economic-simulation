@@ -6,7 +6,7 @@ from multiset import Multiset as m
 from examples.basic_economy.commodities import *
 ## agents
 
-agents = [
+basicEconomyAgents = [
     Land(),
     Farmer(commodities = m({fertiliser :1000})),
     Worker(money=100),
