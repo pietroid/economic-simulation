@@ -40,7 +40,7 @@ class BuyIntent:
         self.money = money
 
     def __str__(self):
-        return f'buy({list(self.commodities.items())},{self.money})'
+        return f'buy({list(Multiset(self.commodities).items())},{self.money})'
 
 class SellIntent:
     def __init__(self, commodities: Multiset, money:float = 0):
@@ -48,4 +48,4 @@ class SellIntent:
         self.money = money
 
     def __str__(self):
-        return f'sell({list(self.commodities.items())},{self.money})'
+        return f'sell({list(Multiset(self.commodities).items())},{self.money})'

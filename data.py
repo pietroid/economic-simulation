@@ -8,7 +8,7 @@ from commodities import *
 
 agents = [
     Land(),
-    Farmer(),
+    Farmer(commodities = m({fertiliser :1000})),
     Worker(money=100),
     Miner(money=100),
     Factory(money=1000),

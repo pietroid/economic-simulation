@@ -5,7 +5,7 @@ from data import agents
 from entities import BuyIntent, Exchange, SellIntent
 
 ##configs
-sleepTime = 1
+sleepTime = 0.1
 interrupt = False
 debug = False
 
@@ -30,6 +30,8 @@ while(True):
     for agent in agents:
         agent.transform()
         for intent in agent.intents:
+            if(debug):
+                print(intent)
             totalIntents.append((agent,intent))
 
     #Intents match happens here
@@ -46,13 +48,13 @@ while(True):
             if(agent1 != agent2 and 
                intent1.money == intent2.money and intent1.commodities == intent2.commodities):
 
-                if(type(intent1) is SellIntent and type(intent2) is BuyIntent and (agent1, agent2) not in usedIntentMatches):
+                if(type(intent1) is SellIntent and type(intent2) is BuyIntent and (agent1,intent1,agent2,intent2) not in usedIntentMatches):
                     exchanges.append(Exchange(agent1, agent2, intent1.money, intent1.commodities))
-                    usedIntentMatches.append((agent1,agent2))
+                    usedIntentMatches.append((agent1,intent1,agent2,intent2))
                 
-                if(type(intent1) is BuyIntent and type(intent2) is SellIntent (agent2, agent1) not in usedIntentMatches):
+                if(type(intent1) is BuyIntent and type(intent2) is SellIntent and (agent2,intent2,agent1,intent1) not in usedIntentMatches):
                     exchanges.append(Exchange(agent2, agent1, intent1.money, intent1.commodities))
-                    usedIntentMatches.append((agent2,agent1))
+                    usedIntentMatches.append((agent2,intent2,agent1,intent1))
 
     #Exchanges happen here
     ##TODO: add some kind of randomization to order exchanges differently because of multiple agents ordering
