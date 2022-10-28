@@ -39,19 +39,19 @@ class Mining(Agent):
 
 class Market(Agent):
     def __init__(self, money:float = 0, commodities: m = m({})):
-        self.constantCommoditiesTime = 0 
+        self.unmatchedTime = 0 
         self.buyIntent = BuyIntent({food}, 10)
         super().__init__(money,commodities)
         
     def transform(self):
         if(self.old.buyIntent.status == 'unmatched'):
-            self.constantCommoditiesTime += 1 
+            self.unmatchedTime += 1
         else:
-            self.constantCommoditiesTime = 0
+            self.unmatchedTime = 0
     
-        if(self.constantCommoditiesTime == 5):
+        if(self.unmatchedTime == 5):
             self.buyIntent.money += 1
-            self.constantCommoditiesTime = 0
+            self.unmatchedTime = 0
 
         self.intents = [
             self.buyIntent
