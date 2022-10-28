@@ -2,7 +2,7 @@ import copy
 from typing import List
 from multiset import *
 
-agent_debug = False
+agent_debug = True
 class Agent:
     def __init__(self, money:float = 0, commodities: Multiset = Multiset({})):
         self.money = money
@@ -16,8 +16,8 @@ class Agent:
             for intent in self.intents:
                 print(intent)
 
-        self.transform()
         self.old = copy.deepcopy(self)
+        self.transform()
 
     def transform(self):
         pass

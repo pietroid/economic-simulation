@@ -7,7 +7,7 @@ from entities import BuyIntent, Exchange, SellIntent
 ##configs
 sleepTime = 0.01
 interrupt = True
-debug = False
+debug = True
 
 time = 1
 exchanges = []
@@ -30,8 +30,6 @@ while(True):
     for agent in agents:
         agent.iterate()
         for intent in agent.intents:
-            if(debug):
-                print(intent)
             totalIntents.append((agent,intent))
 
     #Intents match happens here
