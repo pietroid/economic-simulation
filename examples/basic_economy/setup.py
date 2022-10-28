@@ -1,9 +1,9 @@
 
 from typing import List
-from agents import Factory, Farmer, Land, Market, Miner, Mining, Worker
+from examples.basic_economy.agents import Factory, Farmer, Land, Market, Miner, Mining, Worker
 from entities import Exchange
 from multiset import Multiset as m
-from commodities import *
+from examples.basic_economy.commodities import *
 ## agents
 
 agents = [

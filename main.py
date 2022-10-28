@@ -1,7 +1,7 @@
 from time import sleep
 from multiset import *
-from agents import *
-from data import agents
+from examples.basic_economy.agents import *
+from examples.basic_economy.setup import agents
 from entities import BuyIntent, Exchange, SellIntent
 
 ##configs

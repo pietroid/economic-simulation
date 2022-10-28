@@ -1,6 +1,6 @@
 from entities import Agent, BuyIntent, SellIntent
 from multiset import Multiset as m
-from commodities import food, fertiliser, farmerWork, factoryWork, minerals, minerWork
+from examples.basic_economy.commodities import food, fertiliser, farmerWork, factoryWork, minerals, minerWork
 
 class BaseWorker(Agent):
     def __init__(self, workForce, money:float = 0, commodities: m = m({})):
