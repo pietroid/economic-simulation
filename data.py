@@ -8,12 +8,8 @@ from commodities import *
 
 agents = [
     Land(),
-    Land(),
-    Farmer(),
     Farmer(),
     Worker(money=100),
-    Worker(money=100),
-    Miner(money=100),
     Miner(money=100),
     Factory(money=1000),
     Mining(),

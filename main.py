@@ -5,9 +5,9 @@ from data import agents
 from entities import BuyIntent, Exchange, SellIntent
 
 ##configs
-sleepTime = 0.1
-interrupt = True
-debug = True
+sleepTime = 1
+interrupt = False
+debug = False
 
 time = 1
 exchanges = []
@@ -55,6 +55,7 @@ while(True):
                     usedIntentMatches.append((agent2,agent1))
 
     #Exchanges happen here
+    ##TODO: add some kind of randomization to order exchanges differently because of multiple agents ordering
     for exchange in exchanges:
         if(debug):
             print(str(exchange))
@@ -66,6 +67,6 @@ while(True):
 
     #Next iteration
     time += 1
-    sleep(0.1)
+    sleep(sleepTime)
     if(interrupt):
         input()

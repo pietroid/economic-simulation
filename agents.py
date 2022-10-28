@@ -5,7 +5,7 @@ from commodities import food, fertiliser, farmerWork, factoryWork, minerals, min
 class Land(Agent):
     def transform(self):
         #natural daily production without fertiliser
-        self.commodities += m({food:100})
+        self.commodities += m({food:1})
 
         #daily production with fertiliser
         self.convert(
