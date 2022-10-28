@@ -40,12 +40,11 @@ class Mining(Agent):
 class Market(Agent):
     def __init__(self, money:float = 0, commodities: m = m({})):
         super().__init__(money,commodities)
-        self.oldCommodities = self.commodities
         self.foodPrice = 10
         self.constantCommoditiesTime = 0 
 
     def transform(self):
-        if(self.oldCommodities == self.commodities):
+        if(self.old.commodities == self.commodities):
             self.constantCommoditiesTime += 1 
         else:
             self.constantCommoditiesTime = 0
@@ -57,7 +56,6 @@ class Market(Agent):
         self.intents = [
             BuyIntent({food}, self.foodPrice)
         ]
-        self.oldCommodities = self.commodities
 
 class BaseWorker(Agent):
     def __init__(self, workForce, money:float = 0, commodities: m = m({})):

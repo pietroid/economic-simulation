@@ -5,8 +5,8 @@ from data import agents
 from entities import BuyIntent, Exchange, SellIntent
 
 ##configs
-sleepTime = 0.1
-interrupt = False
+sleepTime = 0.01
+interrupt = True
 debug = False
 
 time = 1
@@ -28,7 +28,7 @@ while(True):
     totalIntents = []
     #Transformations happen here
     for agent in agents:
-        agent.transform()
+        agent.iterate()
         for intent in agent.intents:
             if(debug):
                 print(intent)
@@ -49,11 +49,15 @@ while(True):
                intent1.money == intent2.money and intent1.commodities == intent2.commodities):
 
                 if(type(intent1) is SellIntent and type(intent2) is BuyIntent and (agent1,intent1,agent2,intent2) not in usedIntentMatches):
-                    exchanges.append(Exchange(agent1, agent2, intent1.money, intent1.commodities))
+                    exchanges.append(Exchange(agent1, agent2, intent1.money, intent1.commodities, intent1, intent2))
+                    intent1.status = 'matched'
+                    intent2.status = 'matched'
                     usedIntentMatches.append((agent1,intent1,agent2,intent2))
                 
                 if(type(intent1) is BuyIntent and type(intent2) is SellIntent and (agent2,intent2,agent1,intent1) not in usedIntentMatches):
-                    exchanges.append(Exchange(agent2, agent1, intent1.money, intent1.commodities))
+                    exchanges.append(Exchange(agent2, agent1, intent1.money, intent1.commodities, intent1, intent2))
+                    intent1.status = 'matched'
+                    intent2.status = 'matched'
                     usedIntentMatches.append((agent2,intent2,agent1,intent1))
 
     #Exchanges happen here
@@ -61,11 +65,26 @@ while(True):
     for exchange in exchanges:
         if(debug):
             print(str(exchange))
-        if exchange.commoditiesFlow.issubset(exchange.primaryAgent.commodities) and exchange.secondaryAgent.money >= exchange.moneyFlow:
+        primaryAgentHasCommodities = exchange.commoditiesFlow.issubset(exchange.primaryAgent.commodities)
+        secondaryAgentHasMoney = exchange.secondaryAgent.money >= exchange.moneyFlow
+
+        if primaryAgentHasCommodities and secondaryAgentHasMoney:
             exchange.primaryAgent.commodities -= exchange.commoditiesFlow
             exchange.secondaryAgent.commodities += exchange.commoditiesFlow
             exchange.primaryAgent.money += exchange.moneyFlow
             exchange.secondaryAgent.money -= exchange.moneyFlow
+
+            exchange.buyIntent.status = 'completed'
+            exchange.sellIntent.status = 'completed'
+        else:
+            if(not primaryAgentHasCommodities):
+                exchange.buyIntent.status = 'unsufficient_commodities'
+                exchange.sellIntent.status = 'unsufficient_commodities'
+
+            if(not secondaryAgentHasMoney):
+                exchange.buyIntent.status = 'unsufficient_money'
+                exchange.sellIntent.status = 'unsufficient_money'
+            
 
     #Next iteration
     time += 1
