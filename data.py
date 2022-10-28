@@ -7,18 +7,6 @@ from commodities import *
 ## agents
 
 agents = [
- land1,
- land2,
- farmer1,
- farmer2,
- worker1,
- worker2,
- miner1,
- miner2,
- factory,
- mining,
- market
-] = [
     Land(),
     Land(),
     Farmer(),
@@ -45,7 +33,7 @@ agents = [
 # A $<--- B
 # A --->c B 
 
-
+"""
 exchanges: List[Exchange] = [
     #farmer with market
     Exchange(farmer1, market, 20, m({food: 5})),
@@ -83,3 +71,4 @@ exchanges: List[Exchange] = [
     Exchange(market, miner1, 3, m({food: 1})),
     Exchange(market, miner2, 3, m({food: 1})),
 ]
+"""

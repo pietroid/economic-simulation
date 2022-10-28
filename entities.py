@@ -1,3 +1,5 @@
+from ast import Mult
+import re
 from typing import List
 from multiset import *
 
@@ -5,6 +7,7 @@ class Agent:
     def __init__(self, money:float = 0, commodities: Multiset = Multiset({})):
         self.money = money
         self.commodities = commodities
+        self.intents = []
 
     def transform(self):
         pass
@@ -26,3 +29,23 @@ class Exchange:
         self.secondaryAgent = secondaryAgent
         self.moneyFlow = moneyFlow
         self.commoditiesFlow = commoditiesFlow
+
+    def __str__(self):
+        return f'{self.primaryAgent.__class__.__name__.ljust(15)} <--${self.moneyFlow}--'.ljust(10,'-') + \
+        f'   --{str(list(Multiset(self.commoditiesFlow).items()))}'.ljust(60,'-')+f'--> {self.secondaryAgent.__class__.__name__}'
+
+class BuyIntent:
+    def __init__(self, commodities: Multiset, money:float = 0):
+        self.commodities = commodities
+        self.money = money
+
+    def __str__(self):
+        return f'buy({list(self.commodities.items())},{self.money})'
+
+class SellIntent:
+    def __init__(self, commodities: Multiset, money:float = 0):
+        self.commodities = commodities
+        self.money = money
+
+    def __str__(self):
+        return f'sell({list(self.commodities.items())},{self.money})'

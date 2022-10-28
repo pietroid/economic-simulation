@@ -1,17 +1,25 @@
-from entities import Agent
+from entities import Agent, BuyIntent, SellIntent
 from multiset import Multiset as m
 from commodities import food, fertiliser, farmerWork, factoryWork, minerals, minerWork
 
 class Land(Agent):
     def transform(self):
         #natural daily production without fertiliser
-        self.commodities += m({food})
+        self.commodities += m({food:100})
 
         #daily production with fertiliser
         self.convert(
             m({fertiliser: 1, farmerWork: 1}), 
-            m({food: 10})
+            m({food: 10}),
+            greedy = True,
         )
+
+        self.intents = [
+            BuyIntent({farmerWork}),
+            BuyIntent({fertiliser}),
+            SellIntent({food})
+        ]
+
 class Factory(Agent):
     def transform(self):
         self.convert(
@@ -19,6 +27,7 @@ class Factory(Agent):
             m({fertiliser: 5}),
             greedy = True
         )
+
 class Mining(Agent):
     def transform(self):
         self.convert(
@@ -27,8 +36,10 @@ class Mining(Agent):
             greedy = True
         )
 
+
 class Market(Agent):
     pass
+
 class BaseWorker(Agent):
     def __init__(self, workForce, money:float = 0, commodities: m = m({})):
         super().__init__(money,commodities)
@@ -43,9 +54,18 @@ class BaseWorker(Agent):
             {food}, 
             to
         )
+
 class Farmer(BaseWorker):
     def __init__(self, money:float = 0, commodities: m = m({})):
         super().__init__(farmerWork, money,commodities)
+
+    def transform(self):
+        self.intents = [
+            SellIntent({farmerWork}),
+            BuyIntent({food})
+        ]
+
+        return super().transform()
 
 class Worker(BaseWorker):
     def __init__(self, money:float = 0, commodities: m = m({})):
