@@ -1,7 +1,7 @@
 from time import sleep
 from multiset import *
-from examples.basic_economy.agents import *
 from examples.basic_economy.setup import basicEconomyAgents
+from examples.bank_company.setup import bankCompanyAgents
 from entities import BuyIntent, Exchange, SellIntent
 
 ##configs
@@ -11,7 +11,7 @@ debug = True
 
 #choose what case example to simulate
 agents = basicEconomyAgents
-
+agents = bankCompanyAgents
 
 time = 1
 exchanges = []
@@ -48,22 +48,29 @@ while(True):
             intent2 = intentPair2[1]
 
             if(agent1 != agent2 and 
-               intent1.money == intent2.money and intent1.commodities == intent2.commodities):
+               intent1.commodities == intent2.commodities):
 
-                if(type(intent1) is SellIntent and type(intent2) is BuyIntent and (agent1,intent1,agent2,intent2) not in usedIntentMatches):
-                    exchanges.append(Exchange(agent1, agent2, intent1.money, intent1.commodities, intent1, intent2))
+                if( type(intent1) is SellIntent and type(intent2) is BuyIntent and
+                    intent1.money <= intent2.money and
+                    (agent1,intent1,agent2,intent2) not in usedIntentMatches):
+
+                    exchanges.append(Exchange(agent1, agent2, (intent1.money + intent2.money)/2, intent1.commodities, intent1, intent2))
                     intent1.status = 'matched'
                     intent2.status = 'matched'
                     usedIntentMatches.append((agent1,intent1,agent2,intent2))
                 
-                if(type(intent1) is BuyIntent and type(intent2) is SellIntent and (agent2,intent2,agent1,intent1) not in usedIntentMatches):
-                    exchanges.append(Exchange(agent2, agent1, intent1.money, intent1.commodities, intent1, intent2))
+                if( type(intent1) is BuyIntent and type(intent2) is SellIntent and
+                    intent1.money >= intent2.money and
+                    (agent2,intent2,agent1,intent1) not in usedIntentMatches):
+
+                    exchanges.append(Exchange(agent2, agent1, (intent1.money + intent2.money)/2, intent1.commodities, intent1, intent2))
                     intent1.status = 'matched'
                     intent2.status = 'matched'
                     usedIntentMatches.append((agent2,intent2,agent1,intent1))
 
     #Exchanges happen here
     ##TODO: add some kind of randomization to order exchanges differently because of multiple agents ordering
+    #TODO: add greedy exchanges (buy and sell as much as possible)
     for exchange in exchanges:
         if(debug):
             print(str(exchange))
