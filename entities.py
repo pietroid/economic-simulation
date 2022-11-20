@@ -3,12 +3,16 @@ from typing import List
 from multiset import *
 
 agent_debug = True
+agent_id = 0
 class Agent:
     def __init__(self, money:float = 0, commodities: Multiset = Multiset({})):
+        global agent_id
         self.money = money
         self.commodities = commodities
         self.intents = []
         self.old = copy.deepcopy(self)
+        self.id = agent_id
+        agent_id += 1
 
     def iterate(self):
         if(agent_debug):
