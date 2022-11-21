@@ -13,20 +13,20 @@ class BaseWorker(Agent):
         else:
             to = m({self.workForce})
         self.convert(
-            {food}, 
+            {food()}, 
             to
         )
 
 class Farmer(BaseWorker):
     def __init__(self, money:float = 0, commodities: m = m({})):
-        super().__init__(farmerWork, money,commodities)
+        super().__init__(farmerWork(), money,commodities)
 
     def transform(self):
         self.intents = [
-            SellIntent({farmerWork}),
-            SellIntent({fertiliser}),
-            BuyIntent({food}),
-            SellIntent({food}, 15)
+            SellIntent({farmerWork()}),
+            SellIntent({fertiliser()}),
+            BuyIntent({food()}),
+            SellIntent({food()}, 15)
         ]
 
         return super().transform()
@@ -34,29 +34,29 @@ class Farmer(BaseWorker):
 class Land(Agent):
     def transform(self):
         #natural daily production without fertiliser
-        self.commodities += m({food:1})
+        self.commodities += m({food():1})
 
         #daily production with fertiliser
         self.convert(
-            m({fertiliser: 1, farmerWork: 1}), 
-            m({food: 10}),
+            m({fertiliser(): 1, farmerWork(): 1}), 
+            m({food(): 10}),
             greedy = True,
         )
 
         self.intents = [
-            BuyIntent({farmerWork}),
-            BuyIntent({fertiliser}),
-            SellIntent({food})
+            BuyIntent({farmerWork()}),
+            BuyIntent({fertiliser()}),
+            SellIntent({food()})
         ]
 
 class Miner(BaseWorker):
     def __init__(self, money:float = 0, commodities: m = m({})):
-        super().__init__(minerWork, money, commodities)
+        super().__init__(minerWork(), money, commodities)
 
     def transform(self):
         self.intents = [
-            SellIntent({minerWork}),
-            BuyIntent({food}, 5),
+            SellIntent({minerWork()}),
+            BuyIntent({food()}, 5),
         ]
 
         return super().transform()
@@ -65,26 +65,26 @@ class Mining(Agent):
     def transform(self):
         self.convert(
             {minerWork}, 
-            m({minerals: 5}),
+            m({minerals(): 5}),
             greedy = True
         )
 
 class Worker(BaseWorker):
     def __init__(self, money:float = 0, commodities: m = m({})):
-        super().__init__(factoryWork, money, commodities)
+        super().__init__(factoryWork(), money, commodities)
 
 class Factory(Agent):
     def transform(self):
         self.convert(
-            m({factoryWork: 1, minerals: 5}), 
-            m({fertiliser: 5}),
+            m({factoryWork(): 1, minerals(): 5}), 
+            m({fertiliser(): 5}),
             greedy = True
         )
 
 class Market(Agent):
     def __init__(self, money:float = 0, commodities: m = m({})):
         self.unmatchedTime = 0 
-        self.buyIntent = BuyIntent({food}, 10)
+        self.buyIntent = BuyIntent({food()}, 10)
         super().__init__(money,commodities)
         
     def transform(self):

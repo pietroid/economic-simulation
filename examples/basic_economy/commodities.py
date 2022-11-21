@@ -1,8 +1,10 @@
 ## commodities
-food = '1kg Food'
-fertiliser = '100kg fertiliser'
-minerals = '150kg minerals'
+from entities import C
 
-farmerWork = '1 day farmer work'
-factoryWork = '1 day factory work'
-minerWork = '1 day of miner work'
+food = lambda: C('1kg Food')
+fertiliser = lambda: C('100kg fertiliser')
+minerals = lambda: C('150kg minerals')
+
+farmerWork = lambda: C('1 day farmer work')
+factoryWork = lambda: C('1 day factory work')
+minerWork = lambda: C('1 day of miner work')

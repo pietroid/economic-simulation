@@ -34,9 +34,29 @@ class Agent:
             if(not greedy): 
                 break
     
-    def contains(self, commodities: Multiset):
-        return commodities.issubset(self.commodities)
+    def contains(self, test_commodities: Multiset):
+        all_commodities = Multiset(map(lambda commodity: commodity if commodity.hasAttributes() else commodity.description, self.commodities))
+        all_test_commodities = Multiset(map(lambda commodity: commodity if commodity.hasAttributes() else commodity.description, test_commodities))
+        
+        return all_test_commodities.issubset(all_commodities)
 
+    def extract_commodities(self, extracting_commodities: Multiset):
+        for extracting_commodity in extracting_commodities:
+            if extracting_commodity.hasAttributes():
+                self.commodities -= Multiset({extracting_commodity})
+            else:
+                for commodity in self.commodities:
+                    if(commodity.description == extracting_commodity.description):
+                        self.commodities -= Multiset({commodity})
+                        break
+
+class C:
+    def __init__(self, description):
+        self.description = description
+
+    def hasAttributes(self):
+        return len(self.__dict__) > 1
+        
 class BuyIntent:
     def __init__(self, commodities: Multiset, money:float = 0):
         self.commodities = commodities
@@ -44,7 +64,7 @@ class BuyIntent:
         self.status = 'unmatched'
 
     def __str__(self):
-        return f'buy({list(Multiset(self.commodities).items())}, ${self.money}, {self.status})'
+        return f'buy({list(get_description(self.commodities).items())}, ${self.money}, {self.status})'
 
 class SellIntent:
     def __init__(self, commodities: Multiset, money:float = 0):
@@ -53,7 +73,7 @@ class SellIntent:
         self.status = 'unmatched'
 
     def __str__(self):
-        return f'sell({list(Multiset(self.commodities).items())}, ${self.money}, {self.status})'
+        return f'sell({list(get_description(self.commodities).items())}, ${self.money}, {self.status})'
 class Exchange:
     def __init__(self, primaryAgent: Agent, secondaryAgent: Agent, moneyFlow:float, commoditiesFlow: Multiset, sellIntent: SellIntent, buyIntent: BuyIntent):
         self.primaryAgent = primaryAgent
@@ -65,5 +85,7 @@ class Exchange:
 
     def __str__(self):
         return f'{self.primaryAgent.__class__.__name__.ljust(15)} <--${self.moneyFlow}--'.ljust(10,'-') + \
-        f'   --{str(list(Multiset(self.commoditiesFlow).items()))}'.ljust(60,'-')+f'--> {self.secondaryAgent.__class__.__name__}'
+        f'   --{str(list(get_description(self.commoditiesFlow).items()))}'.ljust(60,'-')+f'--> {self.secondaryAgent.__class__.__name__}'
 
+def get_description(commodities: Multiset):
+    return Multiset(map(lambda commodity: commodity.description, commodities))

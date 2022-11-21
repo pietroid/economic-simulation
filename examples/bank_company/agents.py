@@ -6,7 +6,7 @@ from examples.bank_company.commodities import debt, workForce, rawMaterial, prod
 class Bank(Agent):
     def __init__(self):
         super().__init__(100, m({}))
-        self.debtIntent = BuyIntent({debt}, 100)
+        self.debtIntent = BuyIntent({debt()}, 100)
     
     def transform(self):
         self.debtCompleted = self.old.debtIntent.status == 'completed'
@@ -14,7 +14,7 @@ class Bank(Agent):
         if(self.debtCompleted):
             self.money += 100
 
-        self.debtIntent = BuyIntent({debt}, 100)
+        self.debtIntent = BuyIntent({debt()}, 100)
         self.intents = [
             self.debtIntent
         ]
@@ -40,7 +40,7 @@ class Company(Agent):
             #increase salary if not people
             if(self.old.workForceIntent.status == 'unmatched'):
                 self.salary += 1
-            self.workForceIntent = BuyIntent({workForce}, self.salary)
+            self.workForceIntent = BuyIntent({workForce()}, self.salary)
             self.intents.append(self.workForceIntent)
         
             #increase salary if not material

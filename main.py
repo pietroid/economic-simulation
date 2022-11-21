@@ -3,7 +3,7 @@ from multiset import *
 from examples.basic_economy.setup import basicEconomyAgents
 from examples.bank_company.setup import bankCompanyAgents
 from examples.basic_bank.setup import basicBankAgents
-from entities import BuyIntent, Exchange, SellIntent
+from entities import BuyIntent, Exchange, SellIntent, get_description
 
 ##configs
 sleepTime = 0.01
@@ -12,8 +12,8 @@ debug = True
 
 #choose what case example to simulate
 agents = basicEconomyAgents
-agents = bankCompanyAgents
-agents = basicBankAgents
+#agents = bankCompanyAgents
+#agents = basicBankAgents
 
 time = 1
 exchanges = []
@@ -24,7 +24,7 @@ while(True):
     for agent in agents:
         print(
             f'{agent.__class__.__name__}'.ljust(15, ' ') +
-            f'commodities: {list(agent.commodities.items())}'.ljust(100, ' ') +
+            f'commodities: {list(get_description(agent.commodities).items())}'.ljust(100, ' ') +
             f'money: {agent.money}'
         )
         totalMoney += agent.money
@@ -50,7 +50,7 @@ while(True):
             intent2 = intentPair2[1]
 
             if(agent1 != agent2 and 
-               intent1.commodities == intent2.commodities):
+               get_description(intent1.commodities) == get_description(intent2.commodities)):
 
                 if( type(intent1) is SellIntent and type(intent2) is BuyIntent and
                     intent1.money <= intent2.money and
@@ -76,11 +76,12 @@ while(True):
     for exchange in exchanges:
         if(debug):
             print(str(exchange))
-        primaryAgentHasCommodities = exchange.commoditiesFlow.issubset(exchange.primaryAgent.commodities)
+        
+        primaryAgentHasCommodities = exchange.primaryAgent.contains(exchange.commoditiesFlow)
         secondaryAgentHasMoney = exchange.secondaryAgent.money >= exchange.moneyFlow
 
         if primaryAgentHasCommodities and secondaryAgentHasMoney:
-            exchange.primaryAgent.commodities -= exchange.commoditiesFlow
+            exchange.primaryAgent.extract_commodities(exchange.commoditiesFlow)
             exchange.secondaryAgent.commodities += exchange.commoditiesFlow
             exchange.primaryAgent.money += exchange.moneyFlow
             exchange.secondaryAgent.money -= exchange.moneyFlow
