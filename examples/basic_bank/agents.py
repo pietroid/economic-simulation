@@ -33,8 +33,8 @@ class Person(Agent):
             SellIntent({debt()}, 100)
         ]
         for message in self.receivedMessages:
-            if(message.message['status'] == 'expired_debt'):
-                self.intents.append(BuyIntent({debt()}, message.message['value']))
+            if(message.content['status'] == 'expired_debt'):
+                self.intents.append(BuyIntent({debt()}, message.content['value'], target_id = message.recipient_id))
 
         if(self.money < 50 and not self.contains({debt()})):
             self.commodities.add(debt())

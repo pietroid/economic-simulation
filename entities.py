@@ -57,18 +57,20 @@ class C:
         return hash(self.description)
         
 class BuyIntent:
-    def __init__(self, commodities: Multiset, money:float = 0):
+    def __init__(self, commodities: Multiset, money:float = 0, target_id: int = None):
         self.commodities = commodities
         self.money = money
+        self.target_id = target_id
         self.status = 'unmatched'
 
     def __str__(self):
         return f'buy({list(get_description(self.commodities).items())}, ${self.money}, {self.status})'
 
 class SellIntent:
-    def __init__(self, commodities: Multiset, money:float = 0):
+    def __init__(self, commodities: Multiset, money:float = 0, target_id: int = None):
         self.commodities = commodities
         self.money = money
+        self.target_id = target_id
         self.status = 'unmatched'
 
     def __str__(self):
@@ -87,10 +89,10 @@ class Exchange:
         f'   --{str(list(get_description(self.commoditiesFlow).items()))}'.ljust(60,'-')+f'--> {self.secondaryAgent.__class__.__name__}'
 
 class Message:
-    def __init__(self, recipientId, destinataryId, message):
-        self.recipientId = recipientId
-        self.destinataryId = destinataryId
-        self.message = message
+    def __init__(self, recipient_id, destinatary_id, content):
+        self.recipient_id = recipient_id
+        self.destinatary_id = destinatary_id
+        self.content = content
 
 def get_description(commodities: Multiset):
     return Multiset(map(lambda commodity: commodity.description, commodities))

@@ -50,8 +50,8 @@ while(True):
     #distributing messages
     for message in messages:
         for agent in agents:
-            if(agent.id == message.destinataryId):
-                agent.receivedMessages.append(copy.deepcopy(message))
+            if(agent.id == message.destinatary_id):
+                agent.receivedMessages.append(message)
                 break
         
     #Intents match happens here
@@ -66,7 +66,9 @@ while(True):
             intent2 = intentPair2[1]
 
             if(agent1 != agent2 and 
-               intent1.commodities == intent2.commodities):
+               intent1.commodities == intent2.commodities and
+               (intent1.target_id == None or intent1.target_id == agent2.id) and
+               (intent2.target_id == None or intent2.target_id == agent1.id) ):
 
                 if( type(intent1) is SellIntent and type(intent2) is BuyIntent and
                     intent1.money <= intent2.money and
