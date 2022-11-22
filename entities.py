@@ -45,9 +45,10 @@ class Agent:
 class C:
     def __init__(self, description):
         self.description = description
+        self.last_agent_id = None
 
     def hasAttributes(self):
-        return len(self.__dict__) > 1
+        return len(self.__dict__) > 2
 
     def __eq__(self, other):
         return self.description == other.description

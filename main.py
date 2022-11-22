@@ -98,6 +98,8 @@ while(True):
 
         if primaryAgentHasCommodities and secondaryAgentHasMoney:
             exchange.primaryAgent.commodities -= exchange.commoditiesFlow
+            for commodity in exchange.commoditiesFlow:
+                commodity.last_agent_id = exchange.primaryAgent.id
             exchange.secondaryAgent.commodities += exchange.commoditiesFlow
             exchange.primaryAgent.money += exchange.moneyFlow
             exchange.secondaryAgent.money -= exchange.moneyFlow
