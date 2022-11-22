@@ -1,4 +1,5 @@
 from time import sleep
+import copy
 from multiset import *
 from examples.basic_economy.setup import basicEconomyAgents
 from examples.bank_company.setup import bankCompanyAgents
@@ -32,12 +33,27 @@ while(True):
     print()
 
     totalIntents = []
+    messages = []
     #Transformations happen here
     for agent in agents:
         agent.iterate()
+
+        #intents
         for intent in agent.intents:
             totalIntents.append((agent,intent))
 
+        #capturing messages
+        messages += agent.messagesToSend
+        agent.messagesToSend = []
+        agent.receivedMessages = []
+        
+    #distributing messages
+    for message in messages:
+        for agent in agents:
+            if(agent.id == message.destinataryId):
+                agent.receivedMessages.append(copy.deepcopy(message))
+                break
+        
     #Intents match happens here
     exchanges = []
     usedIntentMatches = []

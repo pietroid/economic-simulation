@@ -10,6 +10,8 @@ class Agent:
         self.money = money
         self.commodities = commodities
         self.intents = []
+        self.messagesToSend = []
+        self.receivedMessages = []
         self.old = copy.deepcopy(self)
         self.id = agent_id
         agent_id += 1
@@ -36,6 +38,9 @@ class Agent:
     
     def contains(self, test_commodities: Multiset):
         return test_commodities.issubset(self.commodities)
+
+    def sendMessage(self, to, message):
+        self.messagesToSend.append(Message(self.id, to, message))
 
 class C:
     def __init__(self, description):
@@ -79,6 +84,12 @@ class Exchange:
     def __str__(self):
         return f'{self.primaryAgent.__class__.__name__.ljust(15)} <--${self.moneyFlow}--'.ljust(10,'-') + \
         f'   --{str(list(get_description(self.commoditiesFlow).items()))}'.ljust(60,'-')+f'--> {self.secondaryAgent.__class__.__name__}'
+
+class Message:
+    def __init__(self, recipientId, destinataryId, message):
+        self.recipientId = recipientId
+        self.destinataryId = destinataryId
+        self.message = message
 
 def get_description(commodities: Multiset):
     return Multiset(map(lambda commodity: commodity.description, commodities))
