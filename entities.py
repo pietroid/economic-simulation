@@ -35,20 +35,7 @@ class Agent:
                 break
     
     def contains(self, test_commodities: Multiset):
-        all_commodities = Multiset(map(lambda commodity: commodity if commodity.hasAttributes() else commodity.description, self.commodities))
-        all_test_commodities = Multiset(map(lambda commodity: commodity if commodity.hasAttributes() else commodity.description, test_commodities))
-        
-        return all_test_commodities.issubset(all_commodities)
-
-    def extract_commodities(self, extracting_commodities: Multiset):
-        for extracting_commodity in extracting_commodities:
-            if extracting_commodity.hasAttributes():
-                self.commodities -= Multiset({extracting_commodity})
-            else:
-                for commodity in self.commodities:
-                    if(commodity.description == extracting_commodity.description):
-                        self.commodities -= Multiset({commodity})
-                        break
+        return test_commodities.issubset(self.commodities)
 
 class C:
     def __init__(self, description):
@@ -56,6 +43,12 @@ class C:
 
     def hasAttributes(self):
         return len(self.__dict__) > 1
+
+    def __eq__(self, other):
+        return self.description == other.description
+    
+    def __hash__(self):
+        return hash(self.description)
         
 class BuyIntent:
     def __init__(self, commodities: Multiset, money:float = 0):

@@ -11,9 +11,9 @@ interrupt = True
 debug = True
 
 #choose what case example to simulate
-agents = basicEconomyAgents
+#agents = basicEconomyAgents
 #agents = bankCompanyAgents
-#agents = basicBankAgents
+agents = basicBankAgents
 
 time = 1
 exchanges = []
@@ -50,7 +50,7 @@ while(True):
             intent2 = intentPair2[1]
 
             if(agent1 != agent2 and 
-               get_description(intent1.commodities) == get_description(intent2.commodities)):
+               intent1.commodities == intent2.commodities):
 
                 if( type(intent1) is SellIntent and type(intent2) is BuyIntent and
                     intent1.money <= intent2.money and
@@ -81,7 +81,7 @@ while(True):
         secondaryAgentHasMoney = exchange.secondaryAgent.money >= exchange.moneyFlow
 
         if primaryAgentHasCommodities and secondaryAgentHasMoney:
-            exchange.primaryAgent.extract_commodities(exchange.commoditiesFlow)
+            exchange.primaryAgent.commodities -= exchange.commoditiesFlow
             exchange.secondaryAgent.commodities += exchange.commoditiesFlow
             exchange.primaryAgent.money += exchange.moneyFlow
             exchange.secondaryAgent.money -= exchange.moneyFlow
