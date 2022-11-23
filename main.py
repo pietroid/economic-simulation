@@ -44,8 +44,6 @@ while(True):
 
         #capturing messages
         messages += agent.messagesToSend
-        agent.messagesToSend = []
-        agent.receivedMessages = []
         
     #distributing messages
     for message in messages:

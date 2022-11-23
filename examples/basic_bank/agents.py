@@ -7,16 +7,14 @@ class Bank(Agent):
         super().__init__(100, m({}))
     
     def transform(self):
-        self.intents = [
-            BuyIntent({debt()}, 100)
-        ]
+        self.add(BuyIntent({debt()}, 100))
 
         for debtInstance in self.commodities:
             if(debtInstance.daysToExpiration > 0):
                 debtInstance.daysToExpiration -= 1
                 debtInstance.interest *= 1.01
             else:
-                self.intents.append(SellIntent({debtInstance}, 100 * debtInstance.interest))
+                self.add(SellIntent({debtInstance}, 100 * debtInstance.interest))
                 if(debtInstance.status == 'expired'):
                     #wait for response
                     pass
@@ -29,12 +27,10 @@ class Person(Agent):
         super().__init__(0, m({}))
 
     def transform(self):
-        self.intents = [
-            SellIntent({debt()}, 100)
-        ]
+        self.add(SellIntent({debt()}, 100))
         for message in self.receivedMessages:
             if(message.content['status'] == 'expired_debt'):
-                self.intents.append(BuyIntent({debt()}, message.content['value'], target_id = message.recipient_id))
+                self.add(BuyIntent({debt()}, message.content['value'], target_id = message.recipient_id))
 
         if(self.money < 50 and not self.contains({debt()})):
             self.commodities.add(debt())

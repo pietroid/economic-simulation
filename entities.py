@@ -17,13 +17,22 @@ class Agent:
         agent_id += 1
 
     def iterate(self):
+        #old
+        self.old = copy.deepcopy(self)
+
+        #resetting
+        self.intents = []
+        self.messagesToSend = []
+        self.transform()
+        
+        #new
         if(agent_debug):
             print(f'Intents for {self.__class__.__name__}')
             for intent in self.intents:
                 print(intent)
-
-        self.old = copy.deepcopy(self)
-        self.transform()
+        
+        #resetting 
+        self.receivedMessages = []
 
     def transform(self):
         pass
@@ -41,6 +50,9 @@ class Agent:
 
     def sendMessage(self, to, message):
         self.messagesToSend.append(Message(self.id, to, message))
+
+    def add(self, intent):
+        self.intents.append(intent)
 
 class C:
     def __init__(self, description):
