@@ -1,6 +1,9 @@
-from examples.basic_bank.agents import Bank, Person
+from examples.basic_bank.agents import *
 
 basicBankAgents = [
     Bank(),
-    Person(),
+    Baker(),
+    Farmer(),
+    Lumberjack(),
+    Manufacturer(),
 ]

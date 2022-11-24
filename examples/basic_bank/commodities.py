@@ -8,3 +8,8 @@ class Debt(C):
         self.status = 'active'
 
 debt = lambda : Debt()
+bread = lambda: C('1kg of bread')
+wood = lambda: C('5kg of wood')
+wheat = lambda: C('1kg of wheat')
+workForce = lambda: C('1 day of work')
+artifact = lambda: C('complex artifact')

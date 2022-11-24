@@ -2,7 +2,7 @@ import copy
 from typing import List
 from multiset import *
 
-agent_debug = True
+agent_debug = False
 agent_id = 0
 class Agent:
     def __init__(self, money:float = 0, commodities: Multiset = Multiset({})):

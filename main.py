@@ -9,7 +9,7 @@ from entities import BuyIntent, Exchange, SellIntent, get_description
 ##configs
 sleepTime = 0.01
 interrupt = True
-debug = True
+debug = False
 
 #choose what case example to simulate
 #agents = basicEconomyAgents
@@ -55,6 +55,7 @@ while(True):
     #Intents match happens here
     exchanges = []
     usedIntentMatches = []
+    usedIntents = []
 
     for intentPair1 in totalIntents:
         for intentPair2 in totalIntents:
@@ -70,20 +71,28 @@ while(True):
 
                 if( type(intent1) is SellIntent and type(intent2) is BuyIntent and
                     intent1.money <= intent2.money and
+                    intent1 not in usedIntents and
+                    intent2 not in usedIntents and
                     (agent1,intent1,agent2,intent2) not in usedIntentMatches):
 
                     exchanges.append(Exchange(agent1, agent2, (intent1.money + intent2.money)/2, intent1.commodities, intent1, intent2))
                     intent1.status = 'matched'
                     intent2.status = 'matched'
+                    usedIntents.append(intent1)
+                    usedIntents.append(intent2)
                     usedIntentMatches.append((agent1,intent1,agent2,intent2))
                 
                 if( type(intent1) is BuyIntent and type(intent2) is SellIntent and
                     intent1.money >= intent2.money and
+                    intent1 not in usedIntents and
+                    intent2 not in usedIntents and
                     (agent2,intent2,agent1,intent1) not in usedIntentMatches):
 
                     exchanges.append(Exchange(agent2, agent1, (intent1.money + intent2.money)/2, intent1.commodities, intent1, intent2))
                     intent1.status = 'matched'
                     intent2.status = 'matched'
+                    usedIntents.append(intent1)
+                    usedIntents.append(intent2)
                     usedIntentMatches.append((agent2,intent2,agent1,intent1))
 
     #Exchanges happen here
