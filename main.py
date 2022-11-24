@@ -9,7 +9,7 @@ from entities import BuyIntent, Exchange, SellIntent, get_description
 ##configs
 sleepTime = 0.01
 interrupt = True
-debug = False
+debug = True
 
 #choose what case example to simulate
 #agents = basicEconomyAgents
@@ -65,7 +65,7 @@ while(True):
             intent2 = intentPair2[1]
 
             if(agent1 != agent2 and 
-               intent1.commodities == intent2.commodities and
+               get_description(intent1.commodities) == get_description(intent2.commodities) and
                (intent1.target_id == None or intent1.target_id == agent2.id) and
                (intent2.target_id == None or intent2.target_id == agent1.id) ):
 
@@ -99,14 +99,11 @@ while(True):
     ##TODO: add some kind of randomization to order exchanges differently because of multiple agents ordering
     #TODO: add greedy exchanges (buy and sell as much as possible)
     for exchange in exchanges:
-        if(debug):
-            print(str(exchange))
-        
         primaryAgentHasCommodities = exchange.primaryAgent.contains(exchange.commoditiesFlow)
         secondaryAgentHasMoney = exchange.secondaryAgent.money >= exchange.moneyFlow
 
         if primaryAgentHasCommodities and secondaryAgentHasMoney:
-            exchange.primaryAgent.commodities -= exchange.commoditiesFlow
+            exchange.primaryAgent.remove(exchange.commoditiesFlow)
             for commodity in exchange.commoditiesFlow:
                 commodity.last_agent_id = exchange.primaryAgent.id
             exchange.secondaryAgent.commodities += exchange.commoditiesFlow
@@ -115,6 +112,8 @@ while(True):
 
             exchange.buyIntent.status = 'completed'
             exchange.sellIntent.status = 'completed'
+            if(debug):
+                print(str(exchange))
         else:
             if(not primaryAgentHasCommodities):
                 exchange.buyIntent.status = 'unsufficient_commodities'

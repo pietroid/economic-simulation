@@ -4,26 +4,21 @@ from examples.basic_bank.commodities import *
 
 class Bank(Agent):
     def __init__(self):
-        super().__init__(100, m({}))
+        super().__init__(1000, m({}))
     
     def transform(self):
-        self.add(BuyIntent({debt()}, 100))
-        self.add(BuyIntent({debt()}, 100))
-        self.add(BuyIntent({debt()}, 100))
-        self.add(BuyIntent({debt()}, 100))
-        self.add(BuyIntent({debt()}, 100))
-        self.add(BuyIntent({debt()}, 100))
-        self.add(BuyIntent({debt()}, 100))
         for debtIntent in self.old.intents:
             if(debtIntent.status == 'completed'):
                 self.money += 100
-        print(len(self.commodities))
+        
+        self.add(BuyIntent({debt()}, 100))
+        self.add(BuyIntent({debt()}, 100))
         for debtInstance in self.commodities:
             if(debtInstance.daysToExpiration > 0):
                 debtInstance.daysToExpiration -= 1
                 debtInstance.interest *= 1.01
             else:
-                self.add(SellIntent({debtInstance}, 100 * debtInstance.interest))
+                self.add(SellIntent({debtInstance}, 100 * debtInstance.interest, target_id = debtInstance.last_agent_id))
                 if(debtInstance.status == 'expired'):
                     #wait for response
                     pass
@@ -33,10 +28,12 @@ class Bank(Agent):
 
 class Person(Agent):
     def __init__(self):
-        super().__init__(100, m({bread():5}))
+        super().__init__(0, m({bread():5}))
 
     def transform(self):
+        self.remove({debt()})
         for message in self.receivedMessages:
+            print(message.content)
             if(message.content['status'] == 'expired_debt'):
                 self.add(BuyIntent({debt()}, message.content['value'], target_id = message.recipient_id))
 
@@ -44,6 +41,7 @@ class Person(Agent):
             self.commodities.add(debt())
 
         self.add(SellIntent({debt()}, 100))
+        self.money += 10
 
 class Baker(Person):
     def transform(self):
@@ -56,18 +54,18 @@ class Baker(Person):
                 {bread()},
                 {workForce()}
             )
-        if(not self.contains(m({wood():10}))):
-            for i in range(0,10):
-                self.add(BuyIntent({wood()}, 5))
+        # if(not self.contains(m({wood():10}))):
+        #     for i in range(0,10):
+        #         self.add(BuyIntent({wood()}, 5))
 
-        if(not self.contains(m({wheat():10}))):
-            for i in range(0,10):
-                self.add(BuyIntent({wheat()}, 2))
+        # if(not self.contains(m({wheat():10}))):
+        #     for i in range(0,10):
+        #         self.add(BuyIntent({wheat()}, 2))
         
-        for i in range(0, self.commodities.get(bread(),0)):
-            self.add(SellIntent({bread()},10))
+        # for i in range(0, self.commodities.get(bread(),0)):
+        #     self.add(SellIntent({bread()},10))
         
-        self.add(BuyIntent({artifact()},150))
+        # self.add(BuyIntent({artifact()},150))
         super().transform()
 
 class Farmer(Person):
