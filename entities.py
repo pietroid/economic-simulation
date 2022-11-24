@@ -13,7 +13,7 @@ class Agent:
         self.messagesToSend = []
         self.receivedMessages = []
         self.old = copy.deepcopy(self)
-        self.id = agent_id
+        self.id = f'{self.__class__.__name__}_{agent_id}'
         agent_id += 1
 
     def iterate(self):
@@ -88,23 +88,27 @@ class C:
     # def __hash__(self):
     #     return hash(self.description)
         
-class BuyIntent:
-    def __init__(self, commodities: Multiset, money:float = 0, target_id: int = None):
+class Intent:
+    def __init__(self, commodities: Multiset, money:float = 0, exchanges_limit = float('inf'), target_id: int = None):
         self.commodities = commodities
         self.money = money
+        self.exchanges_limit = exchanges_limit
         self.target_id = target_id
         self.status = 'unmatched'
+    
+    def is_unmatched(self):
+        return self.status == 'unmatched'
 
+    def add_status(self, status, target_id):
+        if(self.is_unmatched()):
+            self.status = {}
+        self.status[target_id] = status
+
+class BuyIntent(Intent):
     def __str__(self):
         return f'buy({list(get_description(self.commodities).items())}, ${self.money}, {self.status})'
 
-class SellIntent:
-    def __init__(self, commodities: Multiset, money:float = 0, target_id: int = None):
-        self.commodities = commodities
-        self.money = money
-        self.target_id = target_id
-        self.status = 'unmatched'
-
+class SellIntent(Intent):
     def __str__(self):
         return f'sell({list(get_description(self.commodities).items())}, ${self.money}, {self.status})'
 class Exchange:

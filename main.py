@@ -55,7 +55,6 @@ while(True):
     #Intents match happens here
     exchanges = []
     usedIntentMatches = []
-    usedIntents = []
 
     for intentPair1 in totalIntents:
         for intentPair2 in totalIntents:
@@ -71,28 +70,20 @@ while(True):
 
                 if( type(intent1) is SellIntent and type(intent2) is BuyIntent and
                     intent1.money <= intent2.money and
-                    intent1 not in usedIntents and
-                    intent2 not in usedIntents and
                     (agent1,intent1,agent2,intent2) not in usedIntentMatches):
 
                     exchanges.append(Exchange(agent1, agent2, (intent1.money + intent2.money)/2, intent1.commodities, intent1, intent2))
-                    intent1.status = 'matched'
-                    intent2.status = 'matched'
-                    usedIntents.append(intent1)
-                    usedIntents.append(intent2)
+                    intent1.add_status('matched', agent2.id)
+                    intent2.add_status('matched', agent1.id)
                     usedIntentMatches.append((agent1,intent1,agent2,intent2))
                 
                 if( type(intent1) is BuyIntent and type(intent2) is SellIntent and
                     intent1.money >= intent2.money and
-                    intent1 not in usedIntents and
-                    intent2 not in usedIntents and
                     (agent2,intent2,agent1,intent1) not in usedIntentMatches):
 
-                    exchanges.append(Exchange(agent2, agent1, (intent1.money + intent2.money)/2, intent1.commodities, intent1, intent2))
-                    intent1.status = 'matched'
-                    intent2.status = 'matched'
-                    usedIntents.append(intent1)
-                    usedIntents.append(intent2)
+                    exchanges.append(Exchange(agent2, agent1, (intent1.money + intent2.money)/2, intent1.commodities, intent2, intent1))
+                    intent1.add_status('matched', agent2.id)
+                    intent2.add_status('matched', agent1.id)
                     usedIntentMatches.append((agent2,intent2,agent1,intent1))
 
     #Exchanges happen here
@@ -110,18 +101,18 @@ while(True):
             exchange.primaryAgent.money += exchange.moneyFlow
             exchange.secondaryAgent.money -= exchange.moneyFlow
 
-            exchange.buyIntent.status = 'completed'
-            exchange.sellIntent.status = 'completed'
+            exchange.buyIntent.add_status('completed', exchange.primaryAgent.id)
+            exchange.sellIntent.add_status('completed', exchange.secondaryAgent.id)
             if(debug):
                 print(str(exchange))
         else:
             if(not primaryAgentHasCommodities):
-                exchange.buyIntent.status = 'unsufficient_commodities'
-                exchange.sellIntent.status = 'unsufficient_commodities'
+                exchange.buyIntent.add_status('unsufficient_commodities',exchange.primaryAgent.id)
+                exchange.sellIntent.add_status('unsufficient_commodities',exchange.secondaryAgent.id)
 
             if(not secondaryAgentHasMoney):
-                exchange.buyIntent.status = 'unsufficient_money'
-                exchange.sellIntent.status = 'unsufficient_money'
+                exchange.buyIntent.add_status('unsufficient_money', exchange.primaryAgent.id)
+                exchange.sellIntent.add_status('unsufficient_money', exchange.secondaryAgent.id)
             
 
     #Next iteration

@@ -8,17 +8,18 @@ class Bank(Agent):
     
     def transform(self):
         for debtIntent in self.old.intents:
-            if(debtIntent.status == 'completed'):
-                self.money += 100
+            if(not debtIntent.is_unmatched()):
+                for id in debtIntent.status:
+                    if(debtIntent.status[id] == 'completed'):
+                        self.money += 100
         
-        self.add(BuyIntent({debt()}, 100))
         self.add(BuyIntent({debt()}, 100))
         for debtInstance in self.commodities:
             if(debtInstance.daysToExpiration > 0):
                 debtInstance.daysToExpiration -= 1
                 debtInstance.interest *= 1.01
             else:
-                self.add(SellIntent({debtInstance}, 100 * debtInstance.interest, target_id = debtInstance.last_agent_id))
+                self.add(SellIntent({debtInstance}, 100 * debtInstance.interest, exchanges_limit = 1, target_id = debtInstance.last_agent_id))
                 if(debtInstance.status == 'expired'):
                     #wait for response
                     pass
@@ -35,7 +36,7 @@ class Person(Agent):
         for message in self.receivedMessages:
             print(message.content)
             if(message.content['status'] == 'expired_debt'):
-                self.add(BuyIntent({debt()}, message.content['value'], target_id = message.recipient_id))
+                self.add(BuyIntent({debt()}, message.content['value'], exchanges_limit = 1, target_id = message.recipient_id))
 
         if(self.money < 50 and not self.contains({debt()})):
             self.commodities.add(debt())
@@ -45,6 +46,9 @@ class Person(Agent):
 
 class Baker(Person):
     def transform(self):
+        for intent in self.old.intents:
+            print(f'status for {self.id}')
+            print(intent.status)
         self.convert(
             m({wood():10, wheat():10, workForce():1}),
             m({bread():10}),
