@@ -45,13 +45,13 @@ class Agent:
                 break
     
     def contains(self, test_commodities: Multiset):
-        tested_commodities = Multiset({})
+        commodities = copy.copy(self.commodities)
         for test_commodity in test_commodities:
             has_test_commodity = False
-            for commodity in self.commodities:
-                if(commodity.description == test_commodity.description and commodity not in tested_commodities):
+            for commodity in commodities:
+                if(commodity.description == test_commodity.description):
                     has_test_commodity = True
-                    tested_commodities.add(commodity)
+                    commodities.remove(commodity, 1)
                     break
             if(not has_test_commodity):
                 return False
@@ -59,14 +59,12 @@ class Agent:
 
     def extract(self, commodities_to_extract: Multiset):
         concrete_commodities_to_extract = Multiset({})
-        used_commodities = Multiset({})
-        for commodity in self.commodities:
-            for commodity_to_extract in commodities_to_extract:
-                if(commodity_to_extract.description == commodity.description and commodity_to_extract not in used_commodities):
+        for commodity_to_extract in commodities_to_extract:
+            for commodity in self.commodities:
+                if(commodity_to_extract.description == commodity.description):
+                    self.commodities.remove(commodity, 1)
                     concrete_commodities_to_extract.add(commodity)
-                    used_commodities.add(commodity_to_extract)
                     break
-        self.commodities -= concrete_commodities_to_extract
         return concrete_commodities_to_extract
 
     def sendMessage(self, to, message):

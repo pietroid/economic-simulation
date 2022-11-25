@@ -1,7 +1,7 @@
 from examples.basic_bank.agents import *
 
 basicBankAgents = [
-    Bank(),
+    #Bank(),
     Baker(),
     #Baker(),
     Farmer(),

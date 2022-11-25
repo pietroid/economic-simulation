@@ -29,7 +29,7 @@ class Bank(Agent):
 
 class Person(Agent):
     def __init__(self):
-        super().__init__(0, m({bread():5}))
+        super().__init__(1000, m({bread():5}))
 
     def transform(self):
         self.extract({debt()})
@@ -56,7 +56,7 @@ class Baker(Person):
                 {workForce()}
             )
     
-        self.add(BuyIntent({wood()}, 5, exchanges_limit = 10))
+        self.add(BuyIntent({wood()}, 5, exchanges_limit = 5))
         self.add(BuyIntent({wheat()}, 2, exchanges_limit = 10))
         self.add(SellIntent({bread()},10))
         
@@ -71,7 +71,7 @@ class Farmer(Person):
         )
         if(not self.contains({workForce()})):
             self.convert(
-                m({bread():2}),
+                m({bread():3}),
                 {workForce()}
             )
 
@@ -104,11 +104,11 @@ class Lumberjack(Person):
         )
         if(not self.contains({workForce()})):
             self.convert(
-                m({bread():3}),
+                m({bread():2}),
                 {workForce()}
             )
         
         self.add(BuyIntent({bread()}, 10, exchanges_limit = 3))
-        self.add(SellIntent({wood()},5))
+        self.add(SellIntent({wood()}, 5))
         self.add(BuyIntent({artifact()},150, exchanges_limit = 1))
         super().transform()

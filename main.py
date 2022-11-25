@@ -7,9 +7,9 @@ from examples.basic_bank.setup import basicBankAgents
 from entities import BuyIntent, Exchange, SellIntent, get_description
 
 ##configs
-sleepTime = 0.01
+sleepTime = 0.00
 interrupt = True
-debug = True
+debug = False
 
 #choose what case example to simulate
 #agents = basicEconomyAgents
