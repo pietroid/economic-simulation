@@ -13,7 +13,7 @@ class Bank(Agent):
                     if(debtIntent.status[id] == 'completed'):
                         self.money += 100
         
-        self.add(BuyIntent({debt()}, 100, exchanges_limit=1))
+        self.add(BuyIntent({debt()}, 100))
         for debtInstance in self.commodities:
             if(debtInstance.daysToExpiration > 0):
                 debtInstance.daysToExpiration -= 1
@@ -42,15 +42,11 @@ class Person(Agent):
             self.commodities.add(debt())
 
         self.add(SellIntent({debt()}, 100))
-        self.money += 10
 
 class Baker(Person):
     def transform(self):
-        for intent in self.old.intents:
-            print(f'status for {self.id}')
-            print(intent.status)
         self.convert(
-            m({wood():10, wheat():10, workForce():1}),
+            m({wheat():10, workForce():1}),
             m({bread():10}),
         )
         if(not self.contains({workForce()})):
@@ -58,18 +54,12 @@ class Baker(Person):
                 {bread()},
                 {workForce()}
             )
-        # if(not self.contains(m({wood():10}))):
-        #     for i in range(0,10):
-        #         self.add(BuyIntent({wood()}, 5))
-
-        # if(not self.contains(m({wheat():10}))):
-        #     for i in range(0,10):
-        #         self.add(BuyIntent({wheat()}, 2))
+    
+        self.add(BuyIntent({wood()}, 5, exchanges_limit = 10))
+        self.add(BuyIntent({wheat()}, 2, exchanges_limit = 10))
+        self.add(SellIntent({bread()},10))
         
-        # for i in range(0, self.commodities.get(bread(),0)):
-        #     self.add(SellIntent({bread()},10))
-        
-        # self.add(BuyIntent({artifact()},150))
+        self.add(BuyIntent({artifact()},150, exchanges_limit = 1))
         super().transform()
 
 class Farmer(Person):
@@ -84,14 +74,9 @@ class Farmer(Person):
                 {workForce()}
             )
 
-        if(not self.contains(m({bread():2}))):
-            for i in range(0,2):
-                self.add(BuyIntent({bread()}, 10))
-        
-        for i in range(0, self.commodities.get(wheat(),0)):
-            self.add(SellIntent({wheat()},2))
-            
-        self.add(BuyIntent({artifact()},150))
+        self.add(BuyIntent({bread()}, 10, exchanges_limit = 2))
+        self.add(SellIntent({wheat()}, 2))    
+        self.add(BuyIntent({artifact()},150, exchanges_limit = 1))
         super().transform()
 
 class Manufacturer(Person):
@@ -104,16 +89,12 @@ class Manufacturer(Person):
             {bread()},
             {workForce()}
         )
-        if(not self.contains(m({wood():10}))):
-            for i in range(0,10):
-                self.add(BuyIntent({wood()}, 5))
-
-        if(not self.contains({bread()})):
-            self.add(BuyIntent({bread()}, 10))
         
-        for i in range(0, self.commodities.get(artifact(),0)):
-            self.add(SellIntent({artifact()},150))
+        self.add(BuyIntent({wood()}, 5, exchanges_limit = 10))
+        self.add(BuyIntent({bread()}, 10, exchanges_limit = 1))
+        self.add(SellIntent({artifact()},150))
         super().transform()
+
 class Lumberjack(Person):
     def transform(self):
         self.convert(
@@ -125,13 +106,8 @@ class Lumberjack(Person):
                 m({bread():3}),
                 {workForce()}
             )
-
-        if(not self.contains(m({bread():3}))):
-            for i in range(0,3):
-                self.add(BuyIntent({bread()}, 10))
         
-        for i in range(0, self.commodities.get(wood(),0)):
-            self.add(SellIntent({wood()},5))
-        
-        self.add(BuyIntent({artifact()},150))
+        self.add(BuyIntent({bread()}, 10, exchanges_limit = 3))
+        self.add(SellIntent({wood()},5))
+        self.add(BuyIntent({artifact()},150, exchanges_limit = 1))
         super().transform()

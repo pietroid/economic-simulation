@@ -88,14 +88,23 @@ while(True):
 
     #Exchanges happen here
     ##TODO: add some kind of randomization to order exchanges differently because of multiple agents ordering
-    #TODO: add greedy exchanges (buy and sell as much as possible)
     for exchange in exchanges:
-        primaryAgentHasCommodities = exchange.primaryAgent.contains(exchange.commoditiesFlow)
-        secondaryAgentHasMoney = exchange.secondaryAgent.money >= exchange.moneyFlow
-        belowBuyIntentLimit = exchange.buyIntent.completed_intents < exchange.buyIntent.exchanges_limit
-        belowSellIntentLimit = exchange.sellIntent.completed_intents < exchange.sellIntent.exchanges_limit
 
-        if (primaryAgentHasCommodities and 
+        completedOnce = False
+        primaryAgentHasCommodities = False
+        secondaryAgentHasMoney = False
+        belowBuyIntentLimit = False
+        belowSellIntentLimit = False
+        
+        def calculate_conditions():
+            global primaryAgentHasCommodities,secondaryAgentHasMoney,belowBuyIntentLimit,belowSellIntentLimit
+            primaryAgentHasCommodities = exchange.primaryAgent.contains(exchange.commoditiesFlow)
+            secondaryAgentHasMoney = exchange.secondaryAgent.money >= exchange.moneyFlow
+            belowBuyIntentLimit = exchange.buyIntent.completed_intents < exchange.buyIntent.exchanges_limit
+            belowSellIntentLimit = exchange.sellIntent.completed_intents < exchange.sellIntent.exchanges_limit
+
+        calculate_conditions()
+        while (primaryAgentHasCommodities and 
            secondaryAgentHasMoney and 
            belowBuyIntentLimit and
            belowSellIntentLimit ):
@@ -112,9 +121,14 @@ while(True):
             
             exchange.buyIntent.completed_intents += 1
             exchange.sellIntent.completed_intents += 1
+            
+            completedOnce = True
             if(debug):
                 print(str(exchange))
-        else:
+
+            calculate_conditions()
+        
+        if(not completedOnce):
             if(not primaryAgentHasCommodities):
                 exchange.buyIntent.add_status('unsufficient_commodities',exchange.primaryAgent.id)
                 exchange.sellIntent.add_status('unsufficient_commodities',exchange.secondaryAgent.id)
