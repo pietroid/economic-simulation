@@ -39,7 +39,7 @@ class Agent:
     ## convert if possible from one set of commodities to another set
     def convert(self, from_:Multiset, to:Multiset, greedy = False):
         while(self.contains(from_)):
-            self.remove(from_)
+            self.extract(from_)
             self.commodities += to
             if(not greedy): 
                 break
@@ -57,7 +57,7 @@ class Agent:
                 return False
         return True
 
-    def remove(self, commodities_to_extract: Multiset):
+    def extract(self, commodities_to_extract: Multiset):
         concrete_commodities_to_extract = Multiset({})
         used_commodities = Multiset({})
         for commodity in self.commodities:
@@ -67,6 +67,7 @@ class Agent:
                     used_commodities.add(commodity_to_extract)
                     break
         self.commodities -= concrete_commodities_to_extract
+        return concrete_commodities_to_extract
 
     def sendMessage(self, to, message):
         self.messagesToSend.append(Message(self.id, to, message))

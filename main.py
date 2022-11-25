@@ -109,10 +109,10 @@ while(True):
            belowBuyIntentLimit and
            belowSellIntentLimit ):
 
-            exchange.primaryAgent.remove(exchange.commoditiesFlow)
-            for commodity in exchange.commoditiesFlow:
+            commoditiesExtracted = exchange.primaryAgent.extract(exchange.commoditiesFlow)
+            for commodity in commoditiesExtracted:
                 commodity.last_agent_id = exchange.primaryAgent.id
-            exchange.secondaryAgent.commodities += exchange.commoditiesFlow
+            exchange.secondaryAgent.commodities += commoditiesExtracted
             exchange.primaryAgent.money += exchange.moneyFlow
             exchange.secondaryAgent.money -= exchange.moneyFlow
 

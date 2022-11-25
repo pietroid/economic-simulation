@@ -32,7 +32,8 @@ class Person(Agent):
         super().__init__(0, m({bread():5}))
 
     def transform(self):
-        self.remove({debt()})
+        self.extract({debt()})
+        
         for message in self.receivedMessages:
             print(message.content)
             if(message.content['status'] == 'expired_debt'):
