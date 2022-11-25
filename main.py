@@ -92,8 +92,14 @@ while(True):
     for exchange in exchanges:
         primaryAgentHasCommodities = exchange.primaryAgent.contains(exchange.commoditiesFlow)
         secondaryAgentHasMoney = exchange.secondaryAgent.money >= exchange.moneyFlow
+        belowBuyIntentLimit = exchange.buyIntent.completed_intents < exchange.buyIntent.exchanges_limit
+        belowSellIntentLimit = exchange.sellIntent.completed_intents < exchange.sellIntent.exchanges_limit
 
-        if primaryAgentHasCommodities and secondaryAgentHasMoney:
+        if (primaryAgentHasCommodities and 
+           secondaryAgentHasMoney and 
+           belowBuyIntentLimit and
+           belowSellIntentLimit ):
+
             exchange.primaryAgent.remove(exchange.commoditiesFlow)
             for commodity in exchange.commoditiesFlow:
                 commodity.last_agent_id = exchange.primaryAgent.id
@@ -103,6 +109,9 @@ while(True):
 
             exchange.buyIntent.add_status('completed', exchange.primaryAgent.id)
             exchange.sellIntent.add_status('completed', exchange.secondaryAgent.id)
+            
+            exchange.buyIntent.completed_intents += 1
+            exchange.sellIntent.completed_intents += 1
             if(debug):
                 print(str(exchange))
         else:
@@ -113,6 +122,14 @@ while(True):
             if(not secondaryAgentHasMoney):
                 exchange.buyIntent.add_status('unsufficient_money', exchange.primaryAgent.id)
                 exchange.sellIntent.add_status('unsufficient_money', exchange.secondaryAgent.id)
+
+            if(not belowBuyIntentLimit):
+                exchange.buyIntent.add_status('limited_by_intent', exchange.primaryAgent.id)
+                exchange.sellIntent.add_status('limited_by_intent', exchange.secondaryAgent.id)
+
+            if(not belowSellIntentLimit):
+                exchange.buyIntent.add_status('limited_by_intent', exchange.primaryAgent.id)
+                exchange.sellIntent.add_status('limited_by_intent', exchange.secondaryAgent.id)
             
 
     #Next iteration

@@ -95,6 +95,7 @@ class Intent:
         self.exchanges_limit = exchanges_limit
         self.target_id = target_id
         self.status = 'unmatched'
+        self.completed_intents = 0
     
     def is_unmatched(self):
         return self.status == 'unmatched'

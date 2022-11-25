@@ -13,7 +13,7 @@ class Bank(Agent):
                     if(debtIntent.status[id] == 'completed'):
                         self.money += 100
         
-        self.add(BuyIntent({debt()}, 100))
+        self.add(BuyIntent({debt()}, 100, exchanges_limit=1))
         for debtInstance in self.commodities:
             if(debtInstance.daysToExpiration > 0):
                 debtInstance.daysToExpiration -= 1
