@@ -88,21 +88,20 @@ class C:
     #     return hash(self.description)
         
 class Intent:
-    def __init__(self, commodities: Multiset, money:float = 0, exchanges_limit = float('inf'), target_id: int = None):
+    def __init__(self, commodities: Multiset, price:float = 0, exchanges_limit = float('inf'), target_id: int = None):
         self.commodities = commodities
-        self.money = money
+        self.price = price
         self.exchanges_limit = exchanges_limit
         self.target_id = target_id
-        self.status = 'unmatched'
+        self.status = {}
         self.completed_intents = 0
     
     def is_unmatched(self):
-        return self.status == 'unmatched'
+        return self.status == {}
 
-    def add_status(self, status, target_id):
-        if(self.is_unmatched()):
-            self.status = {}
-        self.status[target_id] = status
+    def add_status(self, status, target_id, data = {}):
+        self.status[target_id] = {'status': status, 'data': data}
+
 
 class BuyIntent(Intent):
     def __str__(self):

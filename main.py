@@ -69,22 +69,28 @@ while(True):
                (intent2.target_id == None or intent2.target_id == agent1.id) ):
 
                 if( type(intent1) is SellIntent and type(intent2) is BuyIntent and
-                    intent1.money <= intent2.money and
                     (agent1,intent1,agent2,intent2) not in usedIntentMatches):
 
-                    exchanges.append(Exchange(agent1, agent2, (intent1.money + intent2.money)/2, intent1.commodities, intent1, intent2))
-                    intent1.add_status('matched', agent2.id)
-                    intent2.add_status('matched', agent1.id)
-                    usedIntentMatches.append((agent1,intent1,agent2,intent2))
+                    if(intent1.price <= intent2.price):
+                        exchanges.append(Exchange(agent1, agent2, (intent1.price + intent2.price)/2, intent1.commodities, intent1, intent2))
+                        intent1.add_status('matched', agent2.id)
+                        intent2.add_status('matched', agent1.id)
+                        usedIntentMatches.append((agent1,intent1,agent2,intent2))
+                    else:
+                        intent1.add_status('unmatched', agent2.id, {'price': intent2.price})
+                        intent2.add_status('unmatched', agent1.id, {'price': intent1.price})
                 
                 if( type(intent1) is BuyIntent and type(intent2) is SellIntent and
-                    intent1.money >= intent2.money and
                     (agent2,intent2,agent1,intent1) not in usedIntentMatches):
 
-                    exchanges.append(Exchange(agent2, agent1, (intent1.money + intent2.money)/2, intent1.commodities, intent2, intent1))
-                    intent1.add_status('matched', agent2.id)
-                    intent2.add_status('matched', agent1.id)
-                    usedIntentMatches.append((agent2,intent2,agent1,intent1))
+                    if(intent1.price >= intent2.price):
+                        exchanges.append(Exchange(agent2, agent1, (intent1.price + intent2.price)/2, intent1.commodities, intent2, intent1))
+                        intent1.add_status('matched', agent2.id)
+                        intent2.add_status('matched', agent1.id)
+                        usedIntentMatches.append((agent2,intent2,agent1,intent1))
+                    else:
+                        intent1.add_status('unmatched', agent2.id, {'price': intent2.price})
+                        intent2.add_status('unmatched', agent1.id, {'price': intent1.price})
 
     #Exchanges happen here
     ##TODO: add some kind of randomization to order exchanges differently because of multiple agents ordering
