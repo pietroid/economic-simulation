@@ -88,9 +88,10 @@ class C:
     #     return hash(self.description)
         
 class Intent:
-    def __init__(self, commodities: Multiset, price:float = 0, exchanges_limit = float('inf'), target_id: int = None):
+    def __init__(self, commodities: Multiset, price:float = 0, delta = 0, exchanges_limit = float('inf'), target_id: int = None):
         self.commodities = commodities
         self.price = price
+        self.delta = delta
         self.exchanges_limit = exchanges_limit
         self.target_id = target_id
         self.status = {}
@@ -106,10 +107,17 @@ class Intent:
 class BuyIntent(Intent):
     def __str__(self):
         return f'buy({list(get_description(self.commodities).items())}, ${self.money}, {self.status})'
+    
+    def highest_price(self):
+        return self.price * (1 + self.delta)
 
 class SellIntent(Intent):
     def __str__(self):
         return f'sell({list(get_description(self.commodities).items())}, ${self.money}, {self.status})'
+
+    def lowest_price(self):
+        return self.price * (1 - self.delta)
+
 class Exchange:
     def __init__(self, primaryAgent: Agent, secondaryAgent: Agent, moneyFlow:float, commoditiesFlow: Multiset, sellIntent: SellIntent, buyIntent: BuyIntent):
         self.primaryAgent = primaryAgent

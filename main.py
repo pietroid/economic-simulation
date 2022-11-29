@@ -56,6 +56,14 @@ while(True):
     exchanges = []
     usedIntentMatches = []
 
+    def determine_price(sell_intent: SellIntent, buy_intent: BuyIntent):
+        if(buy_intent.price >= sell_intent.price):
+            return sell_intent.price
+        elif(buy_intent.price >= sell_intent.lowest_price()):
+            return buy_intent.price
+        else:
+            return sell_intent.lowest_price()
+
     for intentPair1 in totalIntents:
         for intentPair2 in totalIntents:
             agent1 = intentPair1[0]
@@ -71,10 +79,14 @@ while(True):
                 if( type(intent1) is SellIntent and type(intent2) is BuyIntent and
                     (agent1,intent1,agent2,intent2) not in usedIntentMatches):
 
-                    if(intent1.price <= intent2.price):
-                        exchanges.append(Exchange(agent1, agent2, (intent1.price + intent2.price)/2, intent1.commodities, intent1, intent2))
-                        intent1.add_status('matched', agent2.id)
-                        intent2.add_status('matched', agent1.id)
+                    if(intent1.lowest_price() <= intent2.highest_price()):
+                        sell_intent = intent1
+                        buy_intent = intent2
+                        final_price = determine_price(sell_intent, buy_intent)
+
+                        exchanges.append(Exchange(agent1, agent2, final_price, intent1.commodities, intent1, intent2))
+                        intent1.add_status('matched', agent2.id, {'price': final_price})
+                        intent2.add_status('matched', agent1.id, {'price': final_price})
                         usedIntentMatches.append((agent1,intent1,agent2,intent2))
                     else:
                         intent1.add_status('unmatched', agent2.id, {'price': intent2.price})
@@ -83,10 +95,14 @@ while(True):
                 if( type(intent1) is BuyIntent and type(intent2) is SellIntent and
                     (agent2,intent2,agent1,intent1) not in usedIntentMatches):
 
-                    if(intent1.price >= intent2.price):
-                        exchanges.append(Exchange(agent2, agent1, (intent1.price + intent2.price)/2, intent1.commodities, intent2, intent1))
-                        intent1.add_status('matched', agent2.id)
-                        intent2.add_status('matched', agent1.id)
+                    if(intent1.highest_price() >= intent2.lowest_price()):
+                        sell_intent = intent2
+                        buy_intent = intent1
+                        final_price = determine_price(sell_intent, buy_intent)
+
+                        exchanges.append(Exchange(agent2, agent1, final_price, intent1.commodities, intent2, intent1))
+                        intent1.add_status('matched', agent2.id, {'price': final_price})
+                        intent2.add_status('matched', agent1.id, {'price': final_price})
                         usedIntentMatches.append((agent2,intent2,agent1,intent1))
                     else:
                         intent1.add_status('unmatched', agent2.id, {'price': intent2.price})
