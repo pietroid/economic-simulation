@@ -45,9 +45,13 @@ class Person(Agent):
         self.add(SellIntent({debt()}, 100))
 
 class Baker(Person):
+    def __init__(self):
+        super().__init__()
+        self.bread_price = 5
+
     def transform(self):
         self.convert(
-            m({wheat():10, workForce():1}),
+            m({wheat():10, wood():2, workForce():1}),
             m({bread():10}),
         )
         if(not self.contains({workForce()})):
@@ -56,9 +60,40 @@ class Baker(Person):
                 {workForce()}
             )
     
-        self.add(BuyIntent({wood()}, 5, exchanges_limit = 5))
+        self.add(BuyIntent({wood()}, 5, exchanges_limit = 2))
         self.add(BuyIntent({wheat()}, 2, exchanges_limit = 10))
-        self.add(SellIntent({bread()},10))
+
+        #calculate bread_price
+        price_change = 0
+        self.c_d = 0.1
+        self.c_l1 = 3
+        self.c_l2 = 0.01
+
+        breadIntent = self.get_old_intent('bread')
+        if breadIntent is not None:
+
+            #calculate change due to demand
+            qty_completed_intent = len(breadIntent.get_completed())
+            qty_total_intent = len(breadIntent.get_completed()) + len(breadIntent.get_unmatched())
+            if(qty_total_intent > 0):
+                percentage_completed = qty_completed_intent / qty_total_intent
+            else:
+                percentage_completed = 1
+            price_change += self.c_d * (percentage_completed - 1)
+            
+            #calculate change due to profit 
+            if(qty_completed_intent > 0):
+                print(self.old.profit)
+                unit_profit = self.old.profit / qty_completed_intent
+                if(unit_profit < self.c_l1):
+                    price_change += self.c_l2 * (self.c_l1 - unit_profit)
+                
+                print(f'unit_profit: {unit_profit}')
+
+        self.bread_price = self.old.bread_price * (1 + price_change)
+       
+        print(f'bread price: ${self.bread_price}')
+        self.add(SellIntent({bread()}, self.bread_price, 0.1, intent_label = 'bread'))
         
         self.add(BuyIntent({artifact()},150, exchanges_limit = 1))
         super().transform()

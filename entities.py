@@ -13,6 +13,7 @@ class Agent:
         self.messagesToSend = []
         self.receivedMessages = []
         self.old = copy.deepcopy(self)
+        self.profit = 0
         self.id = f'{self.__class__.__name__}_{agent_id}'
         agent_id += 1
 
@@ -28,6 +29,7 @@ class Agent:
         #resetting
         self.intents = []
         self.messagesToSend = []
+        self.profit = 0
         self.transform()
         
         #resetting 
@@ -73,6 +75,12 @@ class Agent:
     def add(self, intent):
         self.intents.append(intent)
 
+    def get_old_intent(self, label):
+        for intent in self.old.intents:
+            if(intent.intent_label == label):
+                return intent
+        return None
+
 class C:
     def __init__(self, description):
         self.description = description
@@ -88,10 +96,11 @@ class C:
     #     return hash(self.description)
         
 class Intent:
-    def __init__(self, commodities: Multiset, price:float = 0, delta = 0, exchanges_limit = float('inf'), target_id: int = None):
+    def __init__(self, commodities: Multiset, price:float = 0, delta = 0, intent_label = None, exchanges_limit = float('inf'), target_id: int = None):
         self.commodities = commodities
         self.price = price
         self.delta = delta
+        self.intent_label = intent_label
         self.exchanges_limit = exchanges_limit
         self.target_id = target_id
         self.status = {}
@@ -102,7 +111,15 @@ class Intent:
 
     def add_status(self, status, target_id, data = {}):
         self.status[target_id] = {'status': status, 'data': data}
+    
+    def get_completed(self):
+        return {k: v for k, v in self.status.items() if v['status'] == 'completed'}
 
+    def get_unmatched(self):
+        return {k: v for k, v in self.status.items() if v['status'] == 'unmatched'}
+
+    def get_unsufficient_money(self):
+        return {k: v for k, v in self.status.items() if v['status'] == 'unsufficient_money'}
 
 class BuyIntent(Intent):
     def __str__(self):

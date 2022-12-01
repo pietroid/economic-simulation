@@ -137,6 +137,8 @@ while(True):
             exchange.secondaryAgent.commodities += commoditiesExtracted
             exchange.primaryAgent.money += exchange.moneyFlow
             exchange.secondaryAgent.money -= exchange.moneyFlow
+            exchange.primaryAgent.profit += exchange.moneyFlow
+            exchange.secondaryAgent.profit -= exchange.moneyFlow
 
             exchange.buyIntent.add_status('completed', exchange.primaryAgent.id)
             exchange.sellIntent.add_status('completed', exchange.secondaryAgent.id)
