@@ -47,7 +47,7 @@ class Person(Agent):
 class Baker(Person):
     def __init__(self):
         super().__init__()
-        self.bread_price = 5
+        self.bread_price = 1
 
     def transform(self):
         self.convert(
@@ -83,12 +83,10 @@ class Baker(Person):
             
             #calculate change due to profit 
             if(qty_completed_intent > 0):
-                print(self.old.profit)
+                #TODO: correct qty_completed_intent because it only reflects n of intents not n of products sold
                 unit_profit = self.old.profit / qty_completed_intent
                 if(unit_profit < self.c_l1):
                     price_change += self.c_l2 * (self.c_l1 - unit_profit)
-                
-                print(f'unit_profit: {unit_profit}')
 
         self.bread_price = self.old.bread_price * (1 + price_change)
        
@@ -99,6 +97,10 @@ class Baker(Person):
         super().transform()
 
 class Farmer(Person):
+    def __init__(self):
+        super().__init__()
+        self.bread_price = 1
+
     def transform(self):
         self.convert(
             m({workForce():1}),
@@ -110,7 +112,48 @@ class Farmer(Person):
                 {workForce()}
             )
 
-        self.add(BuyIntent({bread()}, 10, exchanges_limit = 2))
+        #calculate bread_price
+        price_change = 0
+        self.c_n = 0.1
+        self.c_l1 = 3
+        self.c_l2 = 0.01
+
+        #calculate change due to necessity
+        sum = 0
+        t = 0
+        d = 5
+            
+        agent = self
+        while(hasattr(agent, 'old') and t < d):
+            breadIntent = agent.get_old_intent('bread')
+            if(breadIntent is not None):
+                qty_uncompleted_intent = len(breadIntent.get_unmatched())
+                qty_total_intent = len(breadIntent.get_completed()) + len(breadIntent.get_unmatched())
+                if(qty_total_intent > 0):
+                    sum += qty_uncompleted_intent / qty_total_intent
+                else:
+                    sum += 1
+            agent = agent.old
+            t += 1
+
+        price_change += self.c_n * sum
+
+    
+        #calculate change due to profit 
+        breadIntent = self.get_old_intent('bread')
+        if breadIntent is not None:        
+            qty_completed_intent = len(breadIntent.get_completed())
+            if(qty_completed_intent > 0):
+                #TODO: correct qty_completed_intent because it only reflects n of intents not n of products sold
+                unit_profit = self.old.profit / qty_completed_intent
+                if(unit_profit < self.c_l1):
+                    price_change += self.c_l2 * (unit_profit - self.c_l1)
+
+        self.bread_price = self.old.bread_price * (1 + price_change)
+        print(f'bread price: ${self.bread_price}')
+
+        self.add(BuyIntent({bread()}, self.bread_price, intent_label = 'bread', exchanges_limit = 2))
+
         self.add(SellIntent({wheat()}, 2))    
         self.add(BuyIntent({artifact()},150, exchanges_limit = 1))
         super().transform()
