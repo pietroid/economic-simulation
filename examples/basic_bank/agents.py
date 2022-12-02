@@ -1,3 +1,4 @@
+from behaviors import buy, sell
 from entities import Agent, BuyIntent, SellIntent
 from multiset import Multiset as m
 from examples.basic_bank.commodities import *
@@ -47,7 +48,6 @@ class Person(Agent):
 class Baker(Person):
     def __init__(self):
         super().__init__()
-        self.bread_price = 1
 
     def transform(self):
         self.convert(
@@ -59,41 +59,13 @@ class Baker(Person):
                 {bread()},
                 {workForce()}
             )
-    
-        self.add(BuyIntent({wood()}, 5, exchanges_limit = 2))
-        self.add(BuyIntent({wheat()}, 2, exchanges_limit = 10))
-
-        #calculate bread_price
-        price_change = 0
-        self.c_d = 0.1
-        self.c_l1 = 3
-        self.c_l2 = 0.01
-
-        breadIntent = self.get_old_intent('bread')
-        if breadIntent is not None:
-
-            #calculate change due to demand
-            qty_completed_intent = len(breadIntent.get_completed())
-            qty_total_intent = len(breadIntent.get_completed()) + len(breadIntent.get_unmatched())
-            if(qty_total_intent > 0):
-                percentage_completed = qty_completed_intent / qty_total_intent
-            else:
-                percentage_completed = 1
-            price_change += self.c_d * (percentage_completed - 1)
-            
-            #calculate change due to profit 
-            if(qty_completed_intent > 0):
-                #TODO: correct qty_completed_intent because it only reflects n of intents not n of products sold
-                unit_profit = self.old.profit / qty_completed_intent
-                if(unit_profit < self.c_l1):
-                    price_change += self.c_l2 * (self.c_l1 - unit_profit)
-
-        self.bread_price = self.old.bread_price * (1 + price_change)
-       
-        print(f'bread price: ${self.bread_price}')
-        self.add(SellIntent({bread()}, self.bread_price, 0.1, intent_label = 'bread'))
         
-        self.add(BuyIntent({artifact()},150, exchanges_limit = 1))
+        buy(self, wood(), 5, exchanges_limit = 2)
+        buy(self, wheat(), 2, exchanges_limit = 10)
+        buy(self, artifact(), 50, exchanges_limit = 1)
+
+        sell(self, bread(), 10)
+        
         super().transform()
 
 class Farmer(Person):
@@ -112,50 +84,11 @@ class Farmer(Person):
                 {workForce()}
             )
 
-        #calculate bread_price
-        price_change = 0
-        self.c_n = 0.1
-        self.c_l1 = 3
-        self.c_l2 = 0.01
+        buy(self, bread(), 10, exchanges_limit = 2)
+        buy(self, artifact(), 20, exchanges_limit = 1)
 
-        #calculate change due to necessity
-        sum = 0
-        t = 0
-        d = 5
-            
-        agent = self
-        while(hasattr(agent, 'old') and t < d):
-            breadIntent = agent.get_old_intent('bread')
-            if(breadIntent is not None):
-                qty_uncompleted_intent = len(breadIntent.get_unmatched())
-                qty_total_intent = len(breadIntent.get_completed()) + len(breadIntent.get_unmatched())
-                if(qty_total_intent > 0):
-                    sum += qty_uncompleted_intent / qty_total_intent
-                else:
-                    sum += 1
-            agent = agent.old
-            t += 1
+        sell(self, wheat(), 2)
 
-        price_change += self.c_n * sum
-
-    
-        #calculate change due to profit 
-        breadIntent = self.get_old_intent('bread')
-        if breadIntent is not None:        
-            qty_completed_intent = len(breadIntent.get_completed())
-            if(qty_completed_intent > 0):
-                #TODO: correct qty_completed_intent because it only reflects n of intents not n of products sold
-                unit_profit = self.old.profit / qty_completed_intent
-                if(unit_profit < self.c_l1):
-                    price_change += self.c_l2 * (unit_profit - self.c_l1)
-
-        self.bread_price = self.old.bread_price * (1 + price_change)
-        print(f'bread price: ${self.bread_price}')
-
-        self.add(BuyIntent({bread()}, self.bread_price, intent_label = 'bread', exchanges_limit = 2))
-
-        self.add(SellIntent({wheat()}, 2))    
-        self.add(BuyIntent({artifact()},150, exchanges_limit = 1))
         super().transform()
 
 class Manufacturer(Person):
@@ -169,9 +102,10 @@ class Manufacturer(Person):
             {workForce()}
         )
         
-        self.add(BuyIntent({wood()}, 5, exchanges_limit = 10))
-        self.add(BuyIntent({bread()}, 10, exchanges_limit = 1))
-        self.add(SellIntent({artifact()},150))
+        buy(self, bread(), 10, exchanges_limit = 1)
+        buy(self, wood(), 5, exchanges_limit = 10)
+
+        sell(self, artifact(), 100)
         super().transform()
 
 class Lumberjack(Person):
@@ -185,8 +119,9 @@ class Lumberjack(Person):
                 m({bread():2}),
                 {workForce()}
             )
-        
-        self.add(BuyIntent({bread()}, 10, exchanges_limit = 3))
-        self.add(SellIntent({wood()}, 5))
-        self.add(BuyIntent({artifact()},150, exchanges_limit = 1))
+
+        buy(self, bread(), 10, exchanges_limit = 3)
+        buy(self, artifact(), 30, exchanges_limit = 1)
+
+        sell(self, wood(), 5)
         super().transform()
