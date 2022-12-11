@@ -4,6 +4,7 @@ from multiset import *
 from examples.basic_economy.setup import basicEconomyAgents
 from examples.bank_company.setup import bankCompanyAgents
 from examples.basic_bank.setup import basicBankAgents
+from examples.seller_buyer.setup import sellerBuyerAgents
 from entities import BuyIntent, Exchange, SellIntent, get_description
 
 ##configs
@@ -14,7 +15,8 @@ debug = False
 #choose what case example to simulate
 #agents = basicEconomyAgents
 #agents = bankCompanyAgents
-agents = basicBankAgents
+#agents = basicBankAgents
+agents = sellerBuyerAgents
 
 time = 1
 exchanges = []

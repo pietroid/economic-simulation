@@ -1,4 +1,5 @@
 from entities import C, Agent, BuyIntent, SellIntent
+import random
 
 ######################################################################
 ##                                                                  ##
@@ -23,10 +24,19 @@ def sell(self: Agent, commodity:C, initial_price: float, exchanges_limit = float
     
     #CONSTANTS
     price_change = 0
-    self.c_d = 0.1
-    self.c_l1 = 5
-    self.c_l2 = 0.01
     commodity_label = commodity.description
+    
+    if(hasattr(self, 'old') and hasattr(self.old, 'old') and hasattr(self.old.old, 'profit')):
+        if(self.old.profit <= self.old.old.profit):
+            self.c_d = self.old.c_d * (1 + random.uniform(-0.1, 0.1))
+            self.c_l1 = self.old.c_l1 * (1 + random.uniform(-0.1, 0.1))
+            self.c_l2 = self.old.c_l2 * (1 + random.uniform(-0.1, 0.1))
+    else:
+        self.c_d = 0.1
+        self.c_l1 = 5
+        self.c_l2 = 0.01
+    
+    print(f'sell c_d: {self.c_d} c_l1: {self.c_l1} c_l2: {self.c_l2}')
 
     oldIntent = self.get_old_intent(commodity_label)
     if oldIntent is not None:
@@ -50,6 +60,9 @@ def sell(self: Agent, commodity:C, initial_price: float, exchanges_limit = float
             unit_profit = self.old.profit / qty_completed_intent
             if(unit_profit < self.c_l1):
                 price_change += self.c_l2 * (self.c_l1 - unit_profit)
+
+    if(price_change <= -0.9):
+        price_change = -0.9
     
     if(hasattr(self.old, 'commodity_price')):
         old_commodity_price = self.old.commodity_price
@@ -78,10 +91,19 @@ def buy(self: Agent, commodity:C, initial_price: float, exchanges_limit = float(
     
     #CONSTANTS
     price_change = 0
-    self.c_n = 0.01
-    self.c_l1 = 3
-    self.c_l2 = 0.01
     commodity_label = commodity.description
+
+    if(hasattr(self, 'old') and hasattr(self.old, 'old') and hasattr(self.old.old, 'profit')):
+        if(self.old.profit <= self.old.old.profit):
+            self.c_n = self.old.c_n * (1 + random.uniform(-0.1, 0.1))
+            self.c_l1 = self.old.c_l1 * (1 + random.uniform(-0.1, 0.1))
+            self.c_l2 = self.old.c_l2 * (1 + random.uniform(-0.1, 0.1))
+    else:
+        self.c_n = 0.01
+        self.c_l1 = 3
+        self.c_l2 = 0.01
+
+    print(f'buy c_n: {self.c_n} c_l1: {self.c_l1} c_l2: {self.c_l2}')
 
     # CALCULATE PRICE CHANGE DUE TO NECESSITY
     # it tends to raise the buy price if agent has
@@ -118,6 +140,9 @@ def buy(self: Agent, commodity:C, initial_price: float, exchanges_limit = float(
             unit_profit = self.old.profit / qty_completed_intent
             if(unit_profit < self.c_l1):
                 price_change += self.c_l2 * (unit_profit - self.c_l1)
+
+    if(price_change <= -0.9):
+        price_change = -0.9
 
     if(hasattr(self.old, 'commodity_price')):
         old_commodity_price = self.old.commodity_price
